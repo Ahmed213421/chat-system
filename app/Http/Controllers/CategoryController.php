@@ -4,11 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Post;
-use App\Models\Tag;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
-class PostController extends Controller
+class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,8 +15,8 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::all();
-        return view('pages.posts.index',compact('posts'));
+        $categories = Category::all();
+        return view('pages.categories.index',compact('categories'));
     }
 
     /**
@@ -28,9 +26,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        $categories = Category::all();
-        $tags = Tag::all();
-        return view('pages.posts.create',compact('categories','tags'));
+        return view('pages.categories.create');
     }
 
     /**
@@ -41,17 +37,11 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request;
+        $category = new Category();
+        $category->name = $request->name;
+        $category->save();
 
-        $post = new Post();
-        $post->name = $request->name;
-        $post->user_id = Auth::user()->id;
-        $post->category_id = $request->category_id;
-        $post->save();
-
-        $post->tags()->attach($request->tag_id);
-
-        return redirect()->route('posts.index');
+        return redirect()->route('category.index');
     }
 
     /**
@@ -62,7 +52,9 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        //
+        $category = Category::find($id)->first();
+        $posts = Post::where('category_id',$id)->get();
+        return view('pages.categories.show',compact('category','posts'));
     }
 
     /**
@@ -96,8 +88,7 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-
-        $post = Post::find($id)->delete();
+        $category = Category::destroy($id);
         return back();
     }
 }

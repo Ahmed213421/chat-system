@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,7 +21,12 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/dashboard', [App\Http\Controllers\HomeController::class, 'index'])->name('dashboard');
-
+Route::group(['middleware' => ['auth:web']], function () {
+    
+    Route::resource('posts',App\Http\Controllers\PostController::class);
+    Route::resource('category',App\Http\Controllers\CategoryController::class);
+    Route::resource('tags',App\Http\Controllers\TagController::class);
+});
 
 Route::get('auth/google', [App\Http\Controllers\GoogleController::class, 'redirectToGoogle']);
 Route::get('auth/google/callback', [App\Http\Controllers\GoogleController::class, 'handleGoogleCallback']);

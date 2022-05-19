@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 
 class TagController extends Controller
@@ -13,7 +15,8 @@ class TagController extends Controller
      */
     public function index()
     {
-        //
+        $tags = Tag::all();
+        return view('pages.tags.index',compact('tags'));
     }
 
     /**
@@ -34,7 +37,12 @@ class TagController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // return $request;
+        $tag = new Tag();
+        $tag->name = $request->tag;
+        $tag->save();
+
+        return back();
     }
 
     /**
@@ -45,7 +53,9 @@ class TagController extends Controller
      */
     public function show($id)
     {
-        //
+        $tag = Tag::find($id);
+        $posts = Post::get();
+        return view('pages.tags.show',compact('tag','posts'));
     }
 
     /**
